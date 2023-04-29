@@ -56,14 +56,14 @@ def lasso(data):
         beta = beta / np.hstack(([1], X_std))
         beta[0] = y_mean - np.sum(beta[1:] * X_mean / X_std)
         # 预测
-        data = (data - X_mean) / X_std
-        data = np.hstack(([1], data))
-        prediction = data @ beta
+        X_test = (data - X_mean) / X_std
+        X_test = np.hstack((np.ones((X_test.shape[0], 1)), X_test))
+        prediction = X_test @ beta
         prediction = prediction * y_std + y_mean
         return prediction
     # 默认alpha=1
     alpha = 1
-    prediction = lasso_regression(X_train, y_train, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9, data=data)
+    prediction = lasso_regression(X_train, y_train, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9)
     return prediction
 
 def read_data(path='./data/exp02/'):
