@@ -9,63 +9,34 @@ except ImportError as e:
     import numpy as np
 
 def ridge(data):
-     # 加载数据
     X_train, y_train = read_data()
-    # 添加常数列
     X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
-    # 岭回归
-    def ridge_regression(X, y, alpha):
-        beta = np.linalg.inv(X.T @ X + alpha * np.identity(X.shape[1])) @ X.T @ y
-        return beta
-    # 默认alpha=1
-    alpha = 1
-    beta = ridge_regression(X_train, y_train, alpha)
-    # 预测
-    data = np.hstack((1, data))
-    prediction = data @ beta
+    alpha = 1  # 正则化系数
+    beta = np.linalg.inv(X_train.T @ X_train + alpha * np.identity(X_train.shape[1])) @ X_train.T @ y_train
+    prediction = np.dot(np.hstack((1, data)), beta)
     return prediction
-    
 def lasso(data):
-    # 加载数据
     X_train, y_train = read_data()
-    # 标准化处理数据
-    X_mean = np.mean(X_train, axis=0)
-    X_std = np.std(X_train, axis=0)
-    X_train = (X_train - X_mean) / X_std
-    y_mean = np.mean(y_train)
-    y_std = np.std(y_train)
-    y_train = (y_train - y_mean) / y_std
-    # 添加常数列
     X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
-    # Lasso回归
-    def lasso_regression(X, y, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9):
-        beta = np.zeros(X.shape[1])
-        for i in range(max_iter):
-            # 计算梯度
-            grad = X.T @ (X @ beta - y) + alpha * np.sign(beta)
-            # 动态调整学习率
-            eta *= decay
-            # 更新权重
-            beta_new = beta - eta * grad
-            # L1正则化
-            beta_new = np.sign(beta_new) * np.maximum(np.abs(beta_new) - alpha * eta, 0)
-            if np.linalg.norm(beta_new - beta) < tol:
-                break
-            beta = beta_new
-        # 反标准化
-        beta = beta / np.hstack(([1], X_std))
-        beta[0] = y_mean - np.sum(beta[1:] * X_mean / X_std)
-        # 预测
-        # 将data参数转换为二维数组
-        X_test = np.array([data])
-        X_test = (X_test - X_mean) / X_std
-        X_test = np.hstack((np.ones((X_test.shape[0], 1)), X_test))
-        prediction = X_test @ beta
-        prediction = prediction * y_std + y_mean
-        return prediction
-    # 默认alpha=1
-    alpha = 1
-    prediction = lasso_regression(X_train, y_train, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9)
+    alpha = 1  # 正则化系数
+    max_iter = 1000  # 最大迭代次数
+    tol = 1e-4  # 收敛误差
+    eta = 0.01  # 初始学习率
+    decay = 0.9  # 学习率衰减因子
+    beta = np.zeros(X_train.shape[1])
+    for i in range(max_iter):
+        # 计算梯度
+        grad = X_train.T @ (X_train @ beta - y_train) + alpha * np.sign(beta)
+        # 动态调整学习率
+        eta *= decay
+        # 更新权重
+        beta_new = beta - eta * grad
+        # L1正则化
+        beta_new = np.sign(beta_new) * np.maximum(np.abs(beta_new) - alpha * eta, 0)
+        if np.linalg.norm(beta_new - beta) < tol:
+            break
+        beta = beta_new
+    prediction = np.dot(np.hstack((1, data)), beta)
     return prediction
 
 def read_data(path='./data/exp02/'):
