@@ -55,15 +55,18 @@ def lasso(data):
         # 反标准化
         beta = beta / np.hstack(([1], X_std))
         beta[0] = y_mean - np.sum(beta[1:] * X_mean / X_std)
-        return beta
+        # 预测
+        data = (data - X_mean) / X_std
+        data = np.hstack((1, data))
+        prediction = data @ beta
+        prediction = prediction * y_std + y_mean
+        return prediction
     # 默认alpha=1
     alpha = 1
     beta = lasso_regression(X_train, y_train, alpha)
     # 预测
-    data = (data - X_mean) / X_std
-    data = np.hstack((1, data))
-    prediction = data @ beta
-    return prediction * y_std + y_mean
+    prediction = lasso_regression(X_train, y_train, alpha, data)
+    return prediction
 
 def read_data(path='./data/exp02/'):
     x = np.load(path + 'X_train.npy')
