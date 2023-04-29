@@ -55,12 +55,10 @@ def lasso(data):
         # 反标准化
         beta = beta / X_std
         beta[0] = y_mean - np.sum(beta[1:] * X_mean / X_std)
-        # 对测试数据进行标准化处理
+        # 预测
         data = np.asarray(data)
         data = (data - X_mean) / X_std
-        # 添加常数列
         data = np.hstack(([1], data))
-        # 预测
         prediction = data @ beta
         prediction = prediction * y_std + y_mean
         return prediction
