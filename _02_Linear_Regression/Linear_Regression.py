@@ -65,6 +65,13 @@ def lasso(data):
     # 默认alpha=1
     alpha = 1
     prediction = lasso_regression(X_train, y_train, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9)
+    # 对测试数据进行标准化处理
+    data = (data - X_mean) / X_std
+    # 添加常数列
+    data = np.hstack(([1], data))
+    # 预测
+    prediction = data @ beta
+    prediction = prediction * y_std + y_mean
     return prediction
 
 def read_data(path='./data/exp02/'):
