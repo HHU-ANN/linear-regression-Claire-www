@@ -53,14 +53,14 @@ def lasso(data):
                 break
             beta = beta_new
         # 反标准化
-        beta = beta / np.hstack(([1], X_std))
+        beta = beta / X_std
         beta[0] = y_mean - np.sum(beta[1:] * X_mean / X_std)
         # 预测
-        # 将data参数转换为二维数组
-        X_test = np.array([data])
-        X_test = (X_test - X_mean) / X_std
-        X_test = np.hstack((np.ones((X_test.shape[0], 1)), X_test))
-        prediction = X_test @ beta
+        data = np.hstack(([1], data))
+        data = (data - X_mean) / X_std
+        data = np.expand_dims(data, axis=0)
+        data = np.hstack((np.ones((data.shape[0], 1)), data))
+        prediction = data @ beta
         prediction = prediction * y_std + y_mean
         return prediction
     # 默认alpha=1
