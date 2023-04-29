@@ -62,8 +62,8 @@ def lasso(data):
     # 预测
     data = (data - X_mean) / X_std
     data = np.hstack((1, data))
-    prediction = (data @ beta[1:] + beta[0]) * y_std + y_mean
-    return prediction
+    prediction = data @ beta
+    return prediction * y_std + y_mean
 
 def read_data(path='./data/exp02/'):
     x = np.load(path + 'X_train.npy')
