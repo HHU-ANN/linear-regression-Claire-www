@@ -61,6 +61,8 @@ def lasso(data):
         prediction = X_test @ beta
         prediction = prediction * y_std + y_mean
         return prediction
+    # 将data参数转换为二维数组
+    data = np.array([data])
     # 默认alpha=1
     alpha = 1
     prediction = lasso_regression(X_train, y_train, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9)
