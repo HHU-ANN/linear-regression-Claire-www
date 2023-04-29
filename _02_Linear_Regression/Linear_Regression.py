@@ -58,7 +58,7 @@ def lasso(data):
         # 预测
         data = np.asarray(data)
         data = (data - X_mean) / X_std
-        data = np.hstack((np.ones((data.shape[0], 1)), data))
+        data = np.hstack(([1], data))
         prediction = data @ beta
         prediction = prediction * y_std + y_mean
         return prediction
