@@ -8,16 +8,20 @@ except ImportError as e:
     os.system("sudo pip3 install numpy")
     import numpy as np
 
-def ridge(data):
+# 岭回归
+def ridge(X_test):
     X_train, y_train = read_data()
     X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
+    X_test = np.hstack((np.ones((X_test.shape[0], 1)), X_test))
     alpha = 1  # 正则化系数
     beta = np.linalg.inv(X_train.T @ X_train + alpha * np.identity(X_train.shape[1])) @ X_train.T @ y_train
-    prediction = np.dot(np.hstack((1, data)), beta)
+    prediction = X_test @ beta
     return prediction
-def lasso(data):
+# Lasso回归
+def lasso(X_test):
     X_train, y_train = read_data()
     X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
+    X_test = np.hstack((np.ones((X_test.shape[0], 1)), X_test))
     alpha = 1  # 正则化系数
     max_iter = 1000  # 最大迭代次数
     tol = 1e-4  # 收敛误差
@@ -36,7 +40,7 @@ def lasso(data):
         if np.linalg.norm(beta_new - beta) < tol:
             break
         beta = beta_new
-    prediction = np.dot(np.hstack((1, data)), beta)
+    prediction = X_test @ beta
     return prediction
 
 def read_data(path='./data/exp02/'):
