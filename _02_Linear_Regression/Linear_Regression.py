@@ -12,7 +12,6 @@ def ridge(data):
      # 加载数据
     X_train, y_train = read_data()
     # 添加常数列
-    data = np.hstack(([1], data))
     X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
     # 岭回归
     def ridge_regression(X, y, alpha):
@@ -37,7 +36,6 @@ def lasso(data):
     y_std = np.std(y_train)
     y_train = (y_train - y_mean) / y_std
     # 添加常数列
-    data = np.hstack(([1], data))
     X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
     # Lasso回归
     def lasso_regression(X, y, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9):
