@@ -55,8 +55,8 @@ def lasso(data):
                 break
             beta = beta_new
         # 反标准化
-        beta = beta / X_std
-        beta[0] = y_mean - np.sum(beta[1:] * X_mean / X_std[1:])
+        beta[1:] = beta[1:] / X_std
+        beta[0] = y_mean - np.sum(beta[1:] * X_mean / X_std)
         # 预测
         data = np.asarray(data)
         data = (data - X_mean) / X_std
