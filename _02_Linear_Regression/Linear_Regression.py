@@ -40,7 +40,7 @@ def lasso(data_input):
     # 添加常数列
     X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
     # Lasso回归
-    def lasso_regression(X, y, alpha, max_iter=100, tol=1e-2, eta=0.01, decay=0.6935):
+    def lasso_regression(X, y, alpha, max_iter=10, tol=1e-2, eta=0.01, decay=0.6935):
         beta = np.zeros(X.shape[1])
         for i in range(max_iter):
             # 计算梯度
@@ -67,7 +67,7 @@ def lasso(data_input):
         return prediction
     # 默认alpha=0.001
     alpha = 0.001
-    prediction = lasso_regression(X_train, y_train, alpha, max_iter=100, tol=1e-2, eta=0.01, decay=0.6935)
+    prediction = lasso_regression(X_train, y_train, alpha, max_iter=10, tol=1e-2, eta=0.01, decay=0.6935)
     # 预测
     prediction = prediction[0]
     return prediction
