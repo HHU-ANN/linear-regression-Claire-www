@@ -67,7 +67,7 @@ def lasso(data):
         return prediction
     # 默认alpha=1
     alpha = 1
-    prediction = lasso_regression(X_train, y_train, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9)
+    prediction = lasso_regression(X_train, y_train, alpha, data=data, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9)
     # 预测
     prediction = prediction[0]
     return prediction
