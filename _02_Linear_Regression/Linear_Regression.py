@@ -20,7 +20,7 @@ def ridge(data):
         beta = np.linalg.inv(X.T @ X + alpha * np.identity(X.shape[1])) @ X.T @ y
         return beta
 
-    alpha = 0.00000000000000001
+    alpha = 1e-60
     beta = ridge_regression(X_train, y_train, alpha)
     # 预测
     data = np.hstack(([1], data))
