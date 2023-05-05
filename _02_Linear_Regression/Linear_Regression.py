@@ -1,76 +1,39 @@
-# 最终在main函数中传入一个维度为6的numpy数组，输出预测值
-
 import os
-
 try:
     import numpy as np
 except ImportError as e:
     os.system("sudo pip3 install numpy")
     import numpy as np
-
-def ridge(data):
-     # 加载数据
-    X_train, y_train = read_data()
-    # 添加常数列
-    X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
-    # 岭回归
-    def ridge_regression(X, y, alpha):
-        beta = np.linalg.inv(X.T @ X + alpha * np.identity(X.shape[1])) @ X.T @ y
-        return beta
-    # 默认alpha=1
-    alpha = 1
-    beta = ridge_regression(X_train, y_train, alpha)
-    # 预测
-    data = np.hstack((1, data))
-    prediction = data @ beta
-    return prediction
-
-def lasso(data):
-    # 加载数据
-    X_train, y_train = read_data()
-    # 标准化处理数据
-    X_mean = np.mean(X_train, axis=0)
-    X_std = np.std(X_train, axis=0)
-    X_train = (X_train - X_mean) / X_std
-    y_mean = np.mean(y_train)
-    y_std = np.std(y_train)
-    y_train = (y_train - y_mean) / y_std
-    # 添加常数列
-    X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
-    # Lasso回归
-    def lasso_regression(X, y, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9):
-        beta = np.zeros(X.shape[1])
-        for i in range(max_iter):
-            # 计算梯度
-            grad = X.T @ (X @ beta - y) + alpha * np.sign(beta)
-            # 动态调整学习率
-            eta *= decay
-            # 更新权重
-            beta_new = beta - eta * grad
-            # L1正则化
-            beta_new = np.sign(beta_new) * np.maximum(np.abs(beta_new) - alpha * eta, 0)
-            if np.linalg.norm(beta_new - beta) < tol:
-                break
-            beta = beta_new
-        # 反标准化
-        beta = beta / X_std
-        beta[0] = y_mean - np.sum(beta[1:] * X_mean / X_std)
-        # 预测
-        data = np.asarray(data)
-        data = (data - X_mean) / X_std
-        data = data.reshape((1, X_train.shape[1]-1))
-        data = np.hstack((np.ones((1, 1)), data))
-        prediction = data @ beta
-        prediction = prediction * y_std + y_mean
-        return prediction
-    # 默认alpha=1
-    alpha = 1
-    prediction = lasso_regression(X_train, y_train, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9)
-    # 预测
-    prediction = prediction[0]
-    return prediction
-
+# 岭回归函数
+def ridge(data, alpha):
+    # 添加截距项
+    X = np.column_stack((np.ones(len(data[:, :-1])), data[:, :-1]))
+    y = data[:, -1] # 获取预测值
+    # 最小二乘法求解
+    coef = np.dot(np.dot(np.linalg.inv(np.dot(X.T, X) + alpha * np.identity(X.shape[1])), X.T), y)
+    return coef
+# Lasso回归函数
+def lasso(data, alpha, lr=0.001, max_iter=10000):
+    # 添加截距项
+    X = np.column_stack((np.ones(len(data[:, :-1])), data[:, :-1]))
+    y = data[:, -1] # 获取预测值
+    w = np.zeros(X.shape[1]) # 初始化权重
+    # 迭代更新权重
+    for i in range(max_iter):
+        # 计算梯度
+        grad = np.dot(X.T, np.dot(X, w) - y) + alpha * np.sign(w)
+        # 更新权重
+        w -= lr * grad
+    return w
+# 读取数据函数
 def read_data(path='./data/exp02/'):
-    x = np.load(path + 'X_train.npy')
-    y = np.load(path + 'y_train.npy')
-    return x, y
+    X_train = np.load(path + 'X_train.npy')
+    y_train = np.load(path + 'y_train.npy')
+    return np.column_stack((X_train, y_train)) # 将属性和预测值合并为一个数组
+data = read_data() # 加载数据
+# 岭回归求解
+coef_ridge = ridge(data, alpha=0.1)
+print(coef_ridge)
+# Lasso回归求解
+coef_lasso = lasso(data, alpha=0.1)
+print(coef_lasso)
