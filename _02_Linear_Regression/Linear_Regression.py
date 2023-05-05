@@ -27,7 +27,7 @@ def ridge(data):
     data = data.reshape(1, -1)
     prediction = data @ beta
     return prediction[0]
-def lasso(data):
+def lasso(data_input):
     # 加载数据
     X_train, y_train = read_data()
     # 标准化处理数据
@@ -58,7 +58,7 @@ def lasso(data):
         beta[1:] = beta[1:] / X_std
         beta[0] = y_mean - np.sum(beta[1:] * X_mean / X_std)
         # 预测
-        data = np.asarray(data)
+        data = np.asarray(data_input)
         data = (data - X_mean) / X_std
         data = data.reshape((1, X_train.shape[1]-1))
         data = np.hstack((np.ones((1, 1)), data))
