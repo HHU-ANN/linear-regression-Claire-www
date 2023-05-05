@@ -1,15 +1,17 @@
 # 最终在main函数中传入一个维度为6的numpy数组，输出预测值
 
 import os
-
 try:
     import numpy as np
 except ImportError as e:
     os.system("sudo pip3 install numpy")
     import numpy as np
-
+def read_data(path='./data/exp02/'):
+    x = np.load(path + 'X_train.npy')
+    y = np.load(path + 'y_train.npy')
+    return x, y
 def ridge(data):
-     # 加载数据
+    # 加载数据
     X_train, y_train = read_data()
     # 添加常数列
     X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
@@ -21,10 +23,10 @@ def ridge(data):
     alpha = 1
     beta = ridge_regression(X_train, y_train, alpha)
     # 预测
-    data = np.hstack((1, data))
+    data = np.hstack(([1], data))
+    data = data.reshape(1, -1)
     prediction = data @ beta
-    return prediction
-
+    return prediction[0]
 def lasso(data):
     # 加载数据
     X_train, y_train = read_data()
@@ -38,7 +40,7 @@ def lasso(data):
     # 添加常数列
     X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
     # Lasso回归
-    def lasso_regression(X, y, alpha, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9):
+    def lasso_regression(X, y, alpha, data, max_iter=1000, tol=1e-4, eta=0.01, decay=0.9):
         beta = np.zeros(X.shape[1])
         for i in range(max_iter):
             # 计算梯度
@@ -69,9 +71,3 @@ def lasso(data):
     # 预测
     prediction = prediction[0]
     return prediction
-
-def read_data(path='./data/exp02/'):
-    x = np.load(path + 'X_train.npy')
-    y = np.load(path + 'y_train.npy')
-    return x, y
-
