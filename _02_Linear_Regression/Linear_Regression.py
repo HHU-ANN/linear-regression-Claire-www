@@ -19,7 +19,6 @@ def ridge(data):
     def ridge_regression(X, y, alpha):
         beta = np.linalg.inv(X.T @ X + alpha * np.identity(X.shape[1])) @ X.T @ y
         return beta
-
     alpha = 1e-10
     beta = ridge_regression(X_train, y_train, alpha)
     # 预测
@@ -65,8 +64,7 @@ def lasso(data_input):
         prediction = data @ beta
         prediction = prediction * y_std + y_mean
         return prediction
-
-    alpha = 3.85915
+     alpha = 3.85915
     prediction = lasso_regression(X_train, y_train, alpha, max_iter=11, tol=1e-2, eta=0.01, decay=0.6935)
     # 预测
     prediction = prediction[0]
